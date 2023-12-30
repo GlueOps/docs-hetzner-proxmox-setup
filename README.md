@@ -36,11 +36,9 @@ qemu-system-x86_64 -daemonize -k en-us -m 4096 \
 -drive file=/dev/$SECONDARY_DISK,format=raw,media=disk,if=virtio \
 -cdrom /tmp/proxmox-ve.iso -boot d -vnc :0,password -monitor telnet:127.0.0.1:4444,server,nowait
 
-```
-
-# Set VNC password
-```bash
 VNC_PASSWORD=$(date +%s | sha256sum | base64 | head -c 32 ; echo)
 echo "change vnc password $VNC_PASSWORD" | nc -q 1 127.0.0.1 4444
 echo "Password for VNC is: $VNC_PASSWORD and IP is: $IP_ADDRESS"
+
 ```
+
