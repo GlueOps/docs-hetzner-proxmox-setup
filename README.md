@@ -31,7 +31,7 @@ CIDR=$(echo "$IP_CIDR" | cut -d'/' -f2)
 PRIMARY_DISK=$(lsblk -dn -o NAME,SIZE,TYPE -e 1,7,11,14,15 | sed -n 1p | awk '{print $1}')
 SECONDARY_DISK=$(lsblk -dn -o NAME,SIZE,TYPE -e 1,7,11,14,15 | sed -n 2p | awk '{print $1}')
 
-qemu-system-x86_64 -daemonize -enable-kvm -m 10240 \
+qemu-system-x86_64 -daemonize -k en-us -m 4096 \
 -drive file=/dev/$PRIMARY_DISK,format=raw,media=disk,if=virtio \
 -drive file=/dev/$SECONDARY_DISK,format=raw,media=disk,if=virtio \
 -cdrom /tmp/proxmox-ve.iso -boot d -vnc :0,password -monitor telnet:127.0.0.1:4444,server,nowait
