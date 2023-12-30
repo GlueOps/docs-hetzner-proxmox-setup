@@ -1,10 +1,7 @@
 # docs-hetzner-proxmox-setup
-
 Worth a watch:
 https://www.youtube.com/watch?v=1pE-XbqPQi4
-
-Additional resources:
-https://gist.github.com/gushmazuko/9208438b7be6ac4e6476529385047bbb
+A lot of this script is based on: https://gist.github.com/gushmazuko/9208438b7be6ac4e6476529385047bbb but modifications were made based on the video and/or issues I came across
 
 
 - Login to server via SSH using rescue mode.
