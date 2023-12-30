@@ -54,3 +54,32 @@ VNC_PASSWORD=$(date +%s | sha256sum | base64 | head -c 32 ; echo)
 echo "change vnc password $VNC_PASSWORD" | nc -q 1 127.0.0.1 4444
 echo "Password for VNC is: $VNC_PASSWORD and IP is: $IP_ADDRESS"
 ```
+
+- Reconnect in VNC and update the `/etc/network/interfaces` so that it uses the correct interface. 
+- It should match the output of this file:
+
+```bash
+cat > /tmp/proxmox_network_config << EOF
+auto lo
+iface lo inet loopback
+
+iface $INTERFACE_NAME inet manual
+
+auto vmbr0
+iface vmbr0 inet static
+  address $IP_ADDRESS/$CIDR
+  gateway $GATEWAY
+  bridge_ports $INTERFACE_NAME
+  bridge_stp off
+  bridge_fd 0
+EOF
+```
+
+After getting the changes made on the proxmox host tell it to shutdown (from the rescue environment) and then reboot into proxmox:
+
+```bash
+printf "system_powerdown\n" | nc 127.0.0.1 4444
+shutdown -r now
+```
+
+After the reboot, your Proxmox VE system should be up and running. You can access the Proxmox VE interface at https://<YourIPAddress>:8006.
