@@ -84,8 +84,9 @@ shutdown -r now
 
 After the reboot, your Proxmox VE system should be up and running. You can access the Proxmox VE interface at https://<YourIPAddress>:8006.
 
+Last steps are to setup a software defined network:
 
-- Run updates:
+Run updates:
 ```bash
 apt-get update && apt-get upgrade
 apt-get update && apt-get dist-upgrade
@@ -94,6 +95,8 @@ systemctl disable --now dnsmasq
 sudo reboot
 ```
 
-Setup a vnet and then you are all set:
+Setup a vnet and then you are all set and can start creating/launching VMs. Some guides to setup the vnet:
 https://pve.proxmox.com/wiki/Setup_Simple_Zone_With_SNAT_and_DHCP
 https://www.youtube.com/watch?v=UZ9mfxNMyHw
+
+For the subnet just use 10.0.0.0/16
