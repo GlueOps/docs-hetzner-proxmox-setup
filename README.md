@@ -40,5 +40,7 @@ qemu-system-x86_64 -daemonize -enable-kvm -m 10240 \
 
 # Set VNC password
 ```bash
-echo "change vnc password <VNC_PASSWORD>" | nc -q 1 127.0.0.1 4444
+VNC_PASSWORD=$(date +%s | sha256sum | base64 | head -c 32 ; echo)
+echo "change vnc password $VNC_PASSWORD" | nc -q 1 127.0.0.1 4444
+echo "Password for VNC is: $VNC_PASSWORD and IP is: $IP_ADDRESS"
 ```
