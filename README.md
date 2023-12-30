@@ -83,3 +83,17 @@ shutdown -r now
 ```
 
 After the reboot, your Proxmox VE system should be up and running. You can access the Proxmox VE interface at https://<YourIPAddress>:8006.
+
+
+- Run updates:
+```bash
+apt-get update && apt-get upgrade
+apt-get update && apt-get dist-upgrade
+apt install dnsmasq
+systemctl disable --now dnsmasq
+sudo reboot
+```
+
+Setup a vnet and then you are all set:
+https://pve.proxmox.com/wiki/Setup_Simple_Zone_With_SNAT_and_DHCP
+https://www.youtube.com/watch?v=UZ9mfxNMyHw
