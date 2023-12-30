@@ -7,7 +7,7 @@ Additional resources:
 https://gist.github.com/gushmazuko/9208438b7be6ac4e6476529385047bbb
 
 
-- Visit hetzner ROBOT console and activate rescue mode and then restart and login using rescue mode.
+- Login to server via SSH using rescue mode.
 
 
 
