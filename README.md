@@ -47,7 +47,8 @@ printf "quit\n" | nc 127.0.0.1 4444
 qemu-system-x86_64 -daemonize -k en-us -m 4096 \
 -drive file=/dev/$PRIMARY_DISK,format=raw,media=disk,if=virtio \
 -drive file=/dev/$SECONDARY_DISK,format=raw,media=disk,if=virtio \
--vnc :0,password -monitor telnet:127.0.0.1:4444,server,nowait
+-vnc :0,password -monitor telnet:127.0.0.1:4444,server,nowait \
+-net user,hostfwd=tcp::2222-:22 -net nic
 
 VNC_PASSWORD=$(date +%s | sha256sum | base64 | head -c 32 ; echo)
 echo "change vnc password $VNC_PASSWORD" | nc -q 1 127.0.0.1 4444
