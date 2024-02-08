@@ -1,15 +1,3 @@
-#Commands to be ran locally
-ssh-keygen -f ~/.ssh/prox -t ed25519 -N "" -C "Proxmox SSH Key" #f for file, t for type, N for no passphrase, C for comment
-ssh-copy-id -i ~/.ssh/prox.pub root@servers_ip #copy the public key to the server
-
-#edit the config file to allow the ssh key
-sed -i 's/^#Port 22/Port 2222/' /etc/ssh/sshd_config
-sed -i 's/^PermitRootLogin yes/PermitRootLogin prohibit-password/' /etc/ssh/sshd_config
-sed -i 's/^#PasswordAuthentication yes/PasswordAuthentication no/' /etc/ssh/sshd_config
-systemctl restart sshd
-ssh -p 2222 root@xxxxxxxxxx #should fail
-ssh -i ~/.ssh/prox -p 2222 root@xxxxxxxxxx #should work
-
 #Populate variables to generate /etc/hosts and /etc/network/interfaces files
 INTERFACE_PORT=$(ip -br addr | grep 'UP' | grep -v '127.0.0.1' | grep -v '::1/128' | awk '{print $1}')
 echo $INTERFACE_PORT
@@ -19,25 +7,6 @@ IP_CIDR=$(ip addr show $INTERFACE_PORT | grep "inet\b" | awk '{print $2}')
 GATEWAY=$(ip route | grep default | awk '{print $3}')
 IP_ADDRESS=$(echo "$IP_CIDR" | cut -d'/' -f1)
 CIDR=$(echo "$IP_CIDR" | cut -d'/' -f2)
-
-#configure hostname and create backup of existing one
-#NOTE: This changes both the /etc/hosts and /etc/hostname files
-mv /etc/hosts /etc/hosts.old
-mv/etc/hostname /etc/hostname.old
-echo "DebProxTest" > /etc/hostname
-cat > /etc/hosts << EOF
-127.0.0.1 localhost.localdomain localhost
-$IP_ADDRESS DebProxTest
-::1     ip6-localhost ip6-loopback
-fe00::0 ip6-localnet
-ff00::0 ip6-mcastprefix
-ff02::1 ip6-allnodes
-ff02::2 ip6-allrouters
-ff02::3 ip6-allhosts
-
-EOF
-#Test the host file should output the ip
-hostname --ip-address
 
 #Configure the network /ect/network/interfaces and create backup of old one
 cat > ~/interfaces << EOF
@@ -71,7 +40,7 @@ wget https://enterprise.proxmox.com/debian/proxmox-release-bookworm.gpg -O /etc/
 sha512sum /etc/apt/trusted.gpg.d/proxmox-release-bookworm.gpg 
 
 #OUTPUT of command should be
-7da6fe34168adc6e479327ba517796d4702fa2f8b4f0a9833f5ea6e6b48f6507a6da403a274fe201595edc86a84463d50383d07f64bdde2e3658108db7d6dc87 /etc/apt/trusted.gpg.d/proxmox-release-bookworm.gpg
+# 7da6fe34168adc6e479327ba517796d4702fa2f8b4f0a9833f5ea6e6b48f6507a6da403a274fe201595edc86a84463d50383d07f64bdde2e3658108db7d6dc87 /etc/apt/trusted.gpg.d/proxmox-release-bookworm.gpg
 
 #Update system
 apt update && apt full-upgrade -y
@@ -104,12 +73,6 @@ apt update && apt dist-upgrade -y
 apt install libpve-network-perl frr-pythontools dnsmasq -y
 systemctl disable --now dnsmasq
 
-#pvesh create /cluster/sdn/vnets/{vnet}/subnets
-pvesh create /cluster/sdn/zones -type simple -zone pveZone -dhcp dnsmasq -ipam pve
-pvesh create /cluster/sdn/vnets -vnet pveVNet -zone pveZone
-pvesh create /cluster/sdn/vnets/pveVNet/subnets --subnet 192.168.1.1/24 --type subnet --dhcp-range start-address=192.168.1.2,end-address=192.168.1.244 --dhcp-dns-server 192.168.1.1 --gateway 192.168.1.1 --snat 1
-pvesh set /cluster/sdn
-
 #move the interfaces and back up the old
 mv /etc/network/interfaces /etc/network/interfaces.old
 mv ~/interfaces /etc/network/interfaces.new
@@ -117,49 +80,6 @@ mv ~/interfaces /etc/network/interfaces.new
 #Reboot to finalize all the changes
 sysctl -w kernel.panic=10
 reboot now
-
-#Install security packages 
-apt install ufw fail2ban -y
-
-#configure the firewall
-ufw allow 8006/tcp
-ufw allow 2222/tcp
-yes | ufw enable
-
-#configure fail2ban
-ref: https://pve.proxmox.com/wiki/Fail2ban
-
-cat > /etc/fail2ban/jail.local << EOF
-
-[sshd]
-
-# To use more aggressive sshd modes set filter parameter "mode" in jail.local:
-# normal (default), ddos, extra or aggressive (combines all).
-# See "tests/files/logs/sshd" or "filter.d/sshd.conf" for usage example and details.
-#mode   = normal
-port    = ssh,2222
-logpath = %(sshd_log)s
-backend = systemd
-
-[proxmox]
-enabled = true
-port = https,http,8006
-filter = proxmox
-backend = systemd
-maxretry = 3
-findtime = 2d
-bantime = 1h
-
-EOF
-
-cat > /etc/fail2ban/filter.d/proxmox.conf << EOF
-[Definition]
-failregex = pvedaemon\[.*authentication failure; rhost=<HOST> user=.* msg=.*
-ignoreregex =
-
-EOF
-
-systemctl restart fail2ban
 
 #Additional security measures
 Enable 2FA on the proxmox web interface
