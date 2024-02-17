@@ -75,11 +75,6 @@ apt update && apt dist-upgrade -y
 apt install libpve-network-perl frr-pythontools dnsmasq -y
 systemctl disable --now dnsmasq
 
-pvesh create /cluster/sdn/zones -type simple -zone zone0 -dhcp dnsmasq -ipam pve
-pvesh create /cluster/sdn/vnets -vnet vnet0 -zone zone0
-pvesh create /cluster/sdn/vnets/vnet0/subnets --subnet 10.0.0.0/16 --type subnet --dhcp-range start-address=10.0.0.50,end-address=10.0.255.254 --gateway 10.0.0.1 --snat 1
-pvesh set /cluster/sdn
-
 #move the interfaces and back up the old
 mv /etc/network/interfaces /etc/network/interfaces.old
 mv ~/interfaces /etc/network/interfaces.new
@@ -87,6 +82,11 @@ mv ~/interfaces /etc/network/interfaces.new
 #Reboot to finalize all the changes
 sysctl -w kernel.panic=10
 reboot now
+
+pvesh create /cluster/sdn/zones -type simple -zone zone0 -dhcp dnsmasq -ipam pve
+pvesh create /cluster/sdn/vnets -vnet vnet0 -zone zone0
+pvesh create /cluster/sdn/vnets/vnet0/subnets --subnet 10.0.0.0/16 --type subnet --dhcp-range start-address=10.0.0.50,end-address=10.0.255.254 --gateway 10.0.0.1 --snat 1
+pvesh set /cluster/sdn
 
 # #Additional security measures
 # Enable 2FA on the proxmox web interface
