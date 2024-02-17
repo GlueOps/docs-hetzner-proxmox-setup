@@ -2,6 +2,7 @@
 INTERFACE_PORT=$(ip -br addr | grep 'UP' | grep -v '127.0.0.1' | grep -v '::1/128' | awk '{print $1}')
 echo $INTERFACE_PORT
 
+
 INTERFACE_NAME=$(udevadm info -q property /sys/class/net/$INTERFACE_PORT | grep "ID_NET_NAME_PATH=" | cut -d'=' -f2)
 IP_CIDR=$(ip addr show $INTERFACE_PORT | grep "inet\b" | awk '{print $2}')
 GATEWAY=$(ip route | grep default | awk '{print $3}')
