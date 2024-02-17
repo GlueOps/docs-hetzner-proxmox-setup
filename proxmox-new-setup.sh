@@ -28,8 +28,8 @@ source /etc/network/interfaces.d/*
 
 EOF
 
-#Reboot the system for changes to take effect
-reboot now
+# #Reboot the system for changes to take effect
+# reboot now
 
 #Add Repository 
 echo "deb [arch=amd64] http://download.proxmox.com/debian/pve bookworm pve-no-subscription" > /etc/apt/sources.list.d/pve-install-repo.list
@@ -37,8 +37,8 @@ echo "deb [arch=amd64] http://download.proxmox.com/debian/pve bookworm pve-no-su
 #Add repository Key
 wget https://enterprise.proxmox.com/debian/proxmox-release-bookworm.gpg -O /etc/apt/trusted.gpg.d/proxmox-release-bookworm.gpg 
 
-# verify
-sha512sum /etc/apt/trusted.gpg.d/proxmox-release-bookworm.gpg 
+# # verify
+# sha512sum /etc/apt/trusted.gpg.d/proxmox-release-bookworm.gpg 
 
 #OUTPUT of command should be
 # 7da6fe34168adc6e479327ba517796d4702fa2f8b4f0a9833f5ea6e6b48f6507a6da403a274fe201595edc86a84463d50383d07f64bdde2e3658108db7d6dc87 /etc/apt/trusted.gpg.d/proxmox-release-bookworm.gpg
@@ -82,9 +82,9 @@ mv ~/interfaces /etc/network/interfaces.new
 sysctl -w kernel.panic=10
 reboot now
 
-#Additional security measures
-Enable 2FA on the proxmox web interface
-select root@pam in upper right corner > TFA > Add
+# #Additional security measures
+# Enable 2FA on the proxmox web interface
+# select root@pam in upper right corner > TFA > Add
 
-#connect to the proxmox web interface
-https://your_ip:8006
+# #connect to the proxmox web interface
+# https://your_ip:8006
