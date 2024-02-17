@@ -48,7 +48,8 @@ apt update && apt full-upgrade -y
 
 #Install Proxmox kernel and reboot
 apt install proxmox-default-kernel -y
-reboot now #Note reboot was left out maybe the cause of the kernel panic - must test in hetzner
+sysctl -w kernel.panic=10
+reboot now
 
 # Set debconf selections for Postfix
 echo "postfix postfix/main_mailer_type select Local only" | debconf-set-selections
