@@ -1,0 +1,11 @@
+#!ipxe
+# Set the Debian installer image
+set debian-installer http://deb.debian.org/debian/dists/bookworm/main/installer-amd64/
+
+# Set your preseed file URL
+set preseed-url https://raw.githubusercontent.com/venkatamutyala/debian-preseed/main/preseed.cfg
+
+# Boot the Debian installer
+kernel ${debian-installer}/current/images/netboot/debian-installer/amd64/linux auto=true priority=critical url=${preseed-url}
+initrd ${debian-installer}/current/images/netboot/debian-installer/amd64/initrd.gz
+boot
