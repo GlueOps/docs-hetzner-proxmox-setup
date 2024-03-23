@@ -1,0 +1,11 @@
+#!ipxe
+
+# Set the Debian live rescue image
+set resc https://cdimage.debian.org/debian-cd/current-live/amd64/iso-hybrid/debian-live-12.5.0-amd64-standard.iso
+
+# Set the kernel
+set kernel https://boot.netboot.xyz/memdisk
+# Boot the Debian installer
+kernel ${kernel} iso raw
+initrd ${resc}
+boot
